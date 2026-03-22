@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Mind</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: radial-gradient(ellipse at 50% 30%, #0a2018 0%, #050f0a 100%);
+      min-height: 100vh;
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2d5a3d; border-radius: 2px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useCallback } = React;
+
+    const TOTAL_ROUNDS = 8;
+    const AI_NAMES = ["Yuki", "Dario", "Mira"];
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function dealHands(round, numPlayers) {
+      const deck = shuffle(Array.from({ length: 100 }, (_, i) => i + 1));
+      const hands = [];
+      for (let p = 0; p < numPlayers; p++) {
+        hands.push(deck.slice(p * round, p * round + round).sort((a, b) => a - b));
+      }
+      return hands;
+    }
+
+    function CardBack() {
+      return (
+        <div style={{
+          width: 54, height: 80, borderRadius: 8,
+          background: "linear-gradient(135deg, #1a3a2a 0%, #0d2018 100%)",
+          border: "1.5px solid #2d6b45",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.5)",
+          flexShrink: 0,
+        }}>
+          <div style={{
+            width: 38, height: 60, borderRadius: 4,
+            border: "1px solid #2d6b45",
+            background: "repeating-linear-gradient(45deg, #0d2018, #0d2018 4px, #142e1e 4px, #142e1e 8px)",
+          }} />
+        </div>
+      );
+    }
+
+    function PlayingCard({ value, highlight, played, danger }) {
+      const bg = danger
+        ? "linear-gradient(135deg, #3a1a1a, #2a0d0d)"
+        : highlight
+        ? "linear-gradient(135deg, #fffbe8, #fff0b0)"
+        : played
+        ? "linear-gradient(135deg, #e8f4e8, #d0e8d0)"
+        : "linear-gradient(135deg, #f9f6ef, #ede8df)";
+      const color = danger ? "#ff6b6b" : highlight ? "#7a5c00" : played ? "#2a6a2a" : "#1a1a1a";
+      const border = danger
+        ? "1.5px solid #8b2020"
+        : highlight
+        ? "2px solid #c8a800"
+        : played
+        ? "1.5px solid #4a8a4a"
+        : "1.5px solid #c8bfaa";
+
+      return (
+        <div style={{
+          width: 54, height: 80, borderRadius: 8,
+          background: bg, border, color,
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: 18, fontWeight: 700,
+          boxShadow: highlight
+            ? "0 0 12px rgba(200,168,0,0.5), 0 2px 8px rgba(0,0,0,0.4)"
+            : "0 2px 8px rgba(0,0,0,0.3)",
+          transition: "transform 0.15s, box-shadow 0.15s",
+          cursor: highlight ? "pointer" : "default",
+          flexShrink: 0,
+          userSelect: "none",
+        }}>
+          {value}
+        </div>
+      );
+    }
+
+    function Log({ entries }) {
+      const ref = useRef();
+      useEffect(() => {
+        if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
+      }, [entries]);
+      return (
+        <div ref={ref} style={{
+          height: 130, overflowY: "auto", padding: "8px 12px",
+          background: "rgba(0,0,0,0.3)", borderRadius: 8,
+          border: "1px solid #2d4a35",
+          fontFamily: "monospace", fontSize: 12, color: "#7ab890",
+          lineHeight: 1.7,
+        }}>
+          {entries.map((e, i) => <div key={i}>{e}</div>)}
+        </div>
+      );
+    }
+
+    function aiDelay(cardValue, playedMax) {
+      const range = 100 - playedMax;
+      if (range <= 0) return 400;
+      const relPos = (cardValue - playedMax) / range;
+      const base = 1200 + relPos * 2800;
+      const jitter = (Math.random() - 0.5) * 600;
+      return Math.max(600, base + jitter);
+    }
+
+    function App() {
+      const [phase, setPhase] = useState("intro");
+      const [round, setRound] = useState(1);
+      const [lives, setLives] = useState(3);
+      const [hands, setHands] = useState([]);
+      const [pile, setPile] = useState([]);
+      const [log, setLog] = useState([]);
+      const [focusing, setFocusing] = useState(false);
+      const numPlayers = 4;
+      const players = ["You", ...AI_NAMES];
+
+      const addLog = useCallback((msg) => {
+        setLog(prev => [...prev.slice(-60), msg]);
+      }, []);
+
+      const startRound = useCallback((r) => {
+        const newHands = dealHands(r, numPlayers);
+        setPile([]);
+        setHands(newHands);
+        setFocusing(false);
+        setPhase("playing");
+        addLog(`── Round ${r} begins. Each player holds ${r} card${r > 1 ? "s" : ""}. ──`);
+      }, [addLog]);
+
+      const startGame = () => {
+        setRound(1);
+        setLives(3);
+        setLog([]);
+        startRound(1);
+      };
+
+      const aiTimerRef = useRef(null);
+
+      const playCard = useCallback((playerIdx, card, currentPile, currentHands, currentLives) => {
+        const skippedCards = [];
+        for (let p = 0; p < numPlayers; p++) {
+          if (p === playerIdx) continue;
+          currentHands[p].filter(c => c < card).forEach(c =>
+            skippedCards.push({ player: p, card: c })
+          );
+        }
+
+        const newHands = currentHands.map((h, i) =>
+          i === playerIdx ? h.filter(c => c !== card) : h
+        );
+        const newPile = [...currentPile, card];
+        const playerName = players[playerIdx];
+
+        if (skippedCards.length > 0) {
+          const newLives = currentLives - 1;
+          const skippedStr = skippedCards.map(s => `${players[s.player]}(${s.card})`).join(", ");
+          addLog(`✗ ${playerName} played ${card} — but ${skippedStr} should've gone first! Life lost.`);
+          const clearedHands = newHands.map(h => h.filter(c => c >= card));
+          setPile(newPile);
+          setHands(clearedHands);
+          setLives(newLives);
+          if (newLives <= 0) {
+            addLog("💀 No lives left. Game over.");
+            setTimeout(() => setPhase("gameOver"), 1200);
+          } else {
+            addLog(`${newLives} life${newLives !== 1 ? "s" : ""} remaining.`);
+          }
+          return { newHands: clearedHands, newPile, newLives, mistake: true };
+        } else {
+          addLog(`✓ ${playerName} played ${card}`);
+          setPile(newPile);
+          setHands(newHands);
+          return { newHands, newPile, newLives: currentLives, mistake: false };
+        }
+      }, [addLog, players]);
+
+      const scheduleAI = useCallback((currentHands, currentPile, currentLives) => {
+        if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+        const aiCards = [];
+        for (let p = 1; p < numPlayers; p++) {
+          if (currentHands[p] && currentHands[p].length > 0) {
+            aiCards.push({ player: p, card: currentHands[p][0] });
+          }
+        }
+        if (aiCards.length === 0) return;
+
+        const pileTop = currentPile.length > 0 ? currentPile[currentPile.length - 1] : 0;
+        aiCards.sort((a, b) => a.card - b.card);
+        const next = aiCards[0];
+        const humanLowest = currentHands[0] && currentHands[0].length > 0 ? currentHands[0][0] : Infinity;
+        const delay = humanLowest < next.card
+          ? aiDelay(next.card, pileTop) * 1.5
+          : aiDelay(next.card, pileTop);
+
+        aiTimerRef.current = setTimeout(() => {
+          setHands(latestHands => {
+            setPile(latestPile => {
+              setLives(latestLives => {
+                const stillValid = latestHands[next.player] && latestHands[next.player][0] === next.card;
+                if (!stillValid) return latestLives;
+                const result = playCard(next.player, next.card, latestPile, latestHands, latestLives);
+                if (result && !result.mistake && result.newLives > 0 && result.newHands.some(h => h.length > 0)) {
+                  scheduleAI(result.newHands, result.newPile, result.newLives);
+                }
+                return result ? result.newLives : latestLives;
+              });
+              return latestPile;
+            });
+            return latestHands;
+          });
+        }, delay);
+      }, [playCard]);
+
+      useEffect(() => {
+        if (phase !== "playing") return;
+        if (hands.length > 0 && hands.every(h => h.length === 0) && pile.length > 0) {
+          if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+          addLog(`🌟 Round ${round} complete!`);
+          setTimeout(() => {
+            if (round >= TOTAL_ROUNDS) {
+              setPhase("win");
+            } else {
+              setRound(r => r + 1);
+              setPhase("roundEnd");
+            }
+          }, 1500);
+        }
+      }, [hands, pile, phase, round, addLog]);
+
+      useEffect(() => {
+        if (phase === "playing" && hands.length > 0) {
+          scheduleAI(hands, pile, lives);
+        }
+        return () => { if (aiTimerRef.current) clearTimeout(aiTimerRef.current); };
+      }, [phase]);
+
+      const humanPlay = (card) => {
+        if (phase !== "playing") return;
+        if (aiTimerRef.current) clearTimeout(aiTimerRef.current);
+        setHands(lh => {
+          setPile(lp => {
+            setLives(ll => {
+              const result = playCard(0, card, lp, lh, ll);
+              if (result && !result.mistake && result.newLives > 0 && result.newHands.some(h => h.length > 0)) {
+                scheduleAI(result.newHands, result.newPile, result.newLives);
+              }
+              return result ? result.newLives : ll;
+            });
+            return lp;
+          });
+          return lh;
+        });
+      };
+
+      const topOfPile = pile.length > 0 ? pile[pile.length - 1] : 0;
+      const humanHand = hands[0] || [];
+
+      const btnStyle = {
+        background: "linear-gradient(135deg, #1a5a2a, #0d3a1a)",
+        border: "1px solid #3a8a4a", color: "#90d490",
+        padding: "14px 40px", borderRadius: 8, fontSize: 16,
+        cursor: "pointer", letterSpacing: "0.1em",
+        boxShadow: "0 4px 16px rgba(0,0,0,0.4)",
+        fontFamily: "'Playfair Display', Georgia, serif",
+      };
+
+      return (
+        <div style={{
+          minHeight: "100vh",
+          background: "radial-gradient(ellipse at 50% 30%, #0a2018 0%, #050f0a 100%)",
+          fontFamily: "'Playfair Display', Georgia, serif",
+          color: "#c8ddc8",
+          display: "flex", flexDirection: "column", alignItems: "center",
+          padding: "24px 16px",
+        }}>
+          <div style={{ width: "100%", maxWidth: 560 }}>
+
+            {/* Header */}
+            <div style={{ textAlign: "center", marginBottom: 20 }}>
+              <h1 style={{
+                fontSize: 38, letterSpacing: "0.15em", color: "#a0d4a0",
+                margin: 0, fontWeight: 400, textTransform: "uppercase",
+                textShadow: "0 0 30px rgba(100,200,100,0.3)",
+              }}>The Mind</h1>
+              {phase === "playing" && (
+                <div style={{ fontSize: 13, color: "#5a8a6a", letterSpacing: "0.1em", marginTop: 4 }}>
+                  Round {round} of {TOTAL_ROUNDS} &nbsp;·&nbsp; {lives} {lives === 1 ? "life" : "lives"} remaining
+                </div>
+              )}
+            </div>
+
+            {/* Intro */}
+            {phase === "intro" && (
+              <div style={{
+                background: "rgba(10,30,20,0.8)", border: "1px solid #2d5a3d",
+                borderRadius: 16, padding: 32, textAlign: "center",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              }}>
+                <p style={{ fontSize: 16, lineHeight: 1.8, color: "#9ac09a", marginBottom: 12 }}>
+                  You and three AI players share a deck of cards numbered 1–100.
+                </p>
+                <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a9a7a", marginBottom: 12 }}>
+                  Each round, everyone is dealt cards. Together, you must play all cards
+                  to the center pile <em>in ascending order</em> — but you cannot communicate.
+                  No talking. No signals. Only intuition.
+                </p>
+                <p style={{ fontSize: 15, lineHeight: 1.8, color: "#7a9a7a", marginBottom: 24 }}>
+                  If someone plays out of order, you lose a life. You start with 3.
+                  Survive {TOTAL_ROUNDS} rounds to win.
+                </p>
+                <button onClick={startGame} style={btnStyle}>Begin</button>
+              </div>
+            )}
+
+            {/* Game Over / Win */}
+            {(phase === "gameOver" || phase === "win") && (
+              <div style={{
+                background: "rgba(10,30,20,0.8)",
+                border: `1px solid ${phase === "win" ? "#3a8a3a" : "#8a3a3a"}`,
+                borderRadius: 16, padding: 32, textAlign: "center",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.5)",
+              }}>
+                <div style={{ fontSize: 48, marginBottom: 12 }}>{phase === "win" ? "🌟" : "💀"}</div>
+                <h2 style={{ color: phase === "win" ? "#80d080" : "#d08080", marginBottom: 12 }}>
+                  {phase === "win" ? "You Won" : "Game Over"}
+                </h2>
+                <p style={{ color: "#7a9a7a", marginBottom: 24 }}>
+                  {phase === "win"
+                    ? `All ${TOTAL_ROUNDS} rounds complete. The mind is one.`
+                    : `Reached round ${round} before losing all lives.`}
+                </p>
+                <button onClick={startGame} style={btnStyle}>Play Again</button>
+              </div>
+            )}
+
+            {/* Round End */}
+            {phase === "roundEnd" && (
+              <div style={{
+                background: "rgba(10,30,20,0.8)", border: "1px solid #2d6a3d",
+                borderRadius: 16, padding: 32, textAlign: "center",
+              }}>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>🌿</div>
+                <h2 style={{ color: "#80c080", marginBottom: 8 }}>Round {round - 1} Complete</h2>
+                <p style={{ color: "#7a9a7a", marginBottom: 24 }}>
+                  Next round: {round} card{round > 1 ? "s" : ""} each.
+                </p>
+                <button onClick={() => startRound(round)} style={btnStyle}>Continue</button>
+              </div>
+            )}
+
+            {phase === "playing" && (
+              <>
+                {/* Lives */}
+                <div style={{ display: "flex", justifyContent: "center", gap: 10, marginBottom: 16 }}>
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} style={{ fontSize: 22, opacity: i < lives ? 1 : 0.2, transition: "opacity 0.4s" }}>💚</div>
+                  ))}
+                </div>
+
+                {/* AI Players */}
+                <div style={{ display: "flex", gap: 12, justifyContent: "center", marginBottom: 20, flexWrap: "wrap" }}>
+                  {AI_NAMES.map((name, i) => {
+                    const aiHand = hands[i + 1] || [];
+                    return (
+                      <div key={name} style={{
+                        background: "rgba(10,25,15,0.7)", border: "1px solid #1d3a25",
+                        borderRadius: 10, padding: "10px 14px", minWidth: 90, textAlign: "center",
+                      }}>
+                        <div style={{ fontSize: 11, color: "#4a7a5a", letterSpacing: "0.1em", marginBottom: 8 }}>{name}</div>
+                        <div style={{ display: "flex", gap: 4, justifyContent: "center", flexWrap: "wrap" }}>
+                          {aiHand.length > 0
+                            ? aiHand.map((_, ci) => <CardBack key={ci} />)
+                            : <span style={{ fontSize: 11, color: "#3a5a3a" }}>done</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Pile */}
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 20 }}>
+                  <div style={{ fontSize: 11, color: "#4a7a5a", letterSpacing: "0.1em", marginBottom: 10 }}>
+                    PILE ({pile.length} card{pile.length !== 1 ? "s" : ""})
+                  </div>
+                  <div style={{ width: 90, height: 110, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+                    {pile.length === 0 ? (
+                      <div style={{
+                        width: 54, height: 80, borderRadius: 8,
+                        border: "1.5px dashed #1d3a25",
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        color: "#1d3a25", fontSize: 11,
+                      }}>empty</div>
+                    ) : (
+                      pile.slice(-4).map((c, i, arr) => (
+                        <div key={c} style={{
+                          position: "absolute",
+                          transform: `rotate(${(i - arr.length / 2) * 4}deg) translateY(${(i - arr.length) * 1}px)`,
+                          zIndex: i,
+                        }}>
+                          <PlayingCard value={c} played />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                  {topOfPile > 0 && (
+                    <div style={{ fontSize: 12, color: "#5a8a6a", marginTop: 4 }}>Top: {topOfPile}</div>
+                  )}
+                </div>
+
+                {/* Focus */}
+                <div style={{ textAlign: "center", marginBottom: 16 }}>
+                  <button onClick={() => setFocusing(f => !f)} style={{
+                    background: focusing ? "linear-gradient(135deg, #1a4a2a, #0d2a15)" : "transparent",
+                    border: `1px solid ${focusing ? "#4a9a5a" : "#2d4a35"}`,
+                    color: focusing ? "#80d080" : "#4a7a5a",
+                    padding: "6px 20px", borderRadius: 20, fontSize: 12,
+                    cursor: "pointer", letterSpacing: "0.08em", transition: "all 0.2s",
+                    fontFamily: "'Playfair Display', Georgia, serif",
+                  }}>
+                    {focusing ? "🧘 Focusing…" : "🧘 Focus"}
+                  </button>
+                  <div style={{ fontSize: 11, color: "#3a5a4a", marginTop: 4 }}>
+                    In the real game, players focus together before playing.
+                  </div>
+                </div>
+
+                {/* Human hand */}
+                <div style={{
+                  background: "rgba(10,25,15,0.7)", border: "1px solid #2d4a35",
+                  borderRadius: 12, padding: "16px 20px", marginBottom: 16,
+                }}>
+                  <div style={{ fontSize: 11, color: "#4a7a5a", letterSpacing: "0.1em", marginBottom: 12, textAlign: "center" }}>
+                    YOUR HAND — click to play
+                  </div>
+                  <div style={{ display: "flex", gap: 10, justifyContent: "center", flexWrap: "wrap" }}>
+                    {humanHand.length === 0 ? (
+                      <span style={{ fontSize: 13, color: "#3a5a3a" }}>You've played all your cards</span>
+                    ) : (
+                      humanHand.map(card => (
+                        <div key={card}
+                          onClick={() => humanPlay(card)}
+                          style={{ transition: "transform 0.1s", cursor: "pointer" }}
+                          onMouseEnter={e => e.currentTarget.style.transform = "translateY(-6px)"}
+                          onMouseLeave={e => e.currentTarget.style.transform = "translateY(0)"}
+                        >
+                          <PlayingCard value={card} highlight />
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+
+                <Log entries={log} />
+              </>
+            )}
+
+            <div style={{ textAlign: "center", marginTop: 20, fontSize: 11, color: "#2a4a35" }}>
+              Based on The Mind by Wolfgang Warsch
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<App />);
+  </script>
+</body>
+</html>
