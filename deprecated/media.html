@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Media — Nosilverv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #fff;
+  color: #111;
+  font-family: 'Courier Prime', 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  min-height: 100vh;
+  padding: 80px 32px 160px;
+  max-width: 480px;
+  margin: 0 auto;
+}
+.year {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 32px;
+}
+.section-header {
+  border-top: 2px solid #111;
+  border-bottom: 1px solid #111;
+  padding: 8px 0;
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  gap: 16px;
+  margin-top: 32px;
+}
+.section-header:first-of-type { margin-top: 0; }
+.col-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #999;
+}
+.entry {
+  display: grid;
+  grid-template-columns: 1fr 60px;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+.entry-name { font-size: 13px; }
+.entry-name em { font-style: italic; }
+.entry-name .dnf { color: #bbb; }
+.entry-date { font-size: 13px; color: #999; text-align: right; }
+.more {
+  margin-top: 48px;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #bbb;
+}
+.more a { color: #bbb; text-decoration: none; border-bottom: 1px solid #ddd; }
+.more a:hover { color: #111; }
+</style>
+</head>
+<body>
+
+<div class="year">2026</div>
+
+<div class="section-header">
+  <div class="col-label">Books</div>
+  <div class="col-label" style="text-align:right">Month</div>
+</div>
+<div class="entry"><div class="entry-name"><em>Steppenwolf</em> — Hesse</div><div class="entry-date">Mar</div></div>
+<div class="entry"><div class="entry-name"><em>Ficciones</em> — Borges</div><div class="entry-date">Mar</div></div>
+<div class="entry"><div class="entry-name"><em>The Name of the Rose</em> — Eco <span class="dnf">(Did not finish)</span></div><div class="entry-date">Mar</div></div>
+<div class="entry"><div class="entry-name"><em>My Struggle</em> — Knausgård <span class="dnf">(Did not finish)</span></div><div class="entry-date">Mar</div></div>
+
+<div class="section-header">
+  <div class="col-label">TV</div>
+  <div class="col-label" style="text-align:right">Month</div>
+</div>
+<div class="entry"><div class="entry-name">Million Dollar Secret</div><div class="entry-date">Mar</div></div>
+<div class="entry"><div class="entry-name">Age of Attraction</div><div class="entry-date">Mar</div></div>
+<div class="entry"><div class="entry-name">Delicious in Dungeon</div><div class="entry-date">Mar</div></div>
+
+<div class="more"><a href="https://x.com/nosilverv/status/2042560471446721017" target="_blank">more reviews on twitter →</a></div>
+
+</body>
+</html>

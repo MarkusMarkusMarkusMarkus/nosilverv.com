@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Music — Nosilverv</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #fffef9;
+  color: #1a1a1a;
+  font-family: 'Caveat', cursive;
+  font-size: 22px;
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 80px 32px 160px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+.back {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #aaa;
+  text-decoration: none;
+  display: block;
+  margin-bottom: 64px;
+}
+.back:hover { color: #333; }
+h1 {
+  font-family: 'Caveat', cursive;
+  font-size: 3.5rem;
+  font-weight: 600;
+  line-height: 1;
+  margin-bottom: 64px;
+  color: #1a1a1a;
+}
+.entry {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+  padding: 12px 0;
+  border-bottom: 1.5px solid #e8e8e0;
+  position: relative;
+}
+.entry-year {
+  font-family: 'Caveat', cursive;
+  font-size: 5rem;
+  font-weight: 400;
+  color: #ece9e0;
+  line-height: 1;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.entry-name {
+  font-size: 22px;
+  position: relative;
+  z-index: 1;
+  padding: 8px 0;
+}
+</style>
+</head>
+<body>
+
+<h1>Music</h1>
+
+<div class="entry"><div class="entry-name">Djembe — school choir</div><div class="entry-year">early</div></div>
+<div class="entry"><div class="entry-name">Broken piano — Xiqweek</div><div class="entry-year">—</div></div>
+<div class="entry"><div class="entry-name">Proper piano</div><div class="entry-year">2023</div></div>
+<div class="entry"><div class="entry-name">Midi Keyboard</div><div class="entry-year">2026</div></div>
+
+</body>
+</html>
