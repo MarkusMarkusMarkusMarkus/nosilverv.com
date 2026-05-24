@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>CFAP — Center for Applied Post-Rationality</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #F7F4EE;
+  color: #1C1C1C;
+  font-family: 'Libre Baskerville', Georgia, serif;
+  overflow-x: hidden;
+}
+
+.hero {
+  padding: 60px 48px 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1.5px solid #1C1C1C;
+}
+
+.cfap-giant {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(120px, 22vw, 240px);
+  line-height: 0.85;
+  letter-spacing: 0.04em;
+  color: #C0392B;
+}
+.cfap-giant .c { color: #1C1C1C; }
+.hero-sub em { font-style: italic; color: #C0392B; }
+
+.hero-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  margin-top: 20px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.hero-estd {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: #BBB;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.cta-row { display: flex; gap: 12px; margin-top: 40px; align-items: center; }
+.btn-main {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; background: #C0392B; color: #F7F4EE;
+  border: none; padding: 16px 28px; cursor: pointer;
+}
+.btn-ghost {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; background: transparent; color: #888;
+  border: 1px solid #CCC; padding: 16px 28px; cursor: pointer;
+}
+
+.strip { padding: 60px 48px; border-bottom: 1.5px solid #1C1C1C; }
+.strip > * { max-width: 720px; margin-left: auto; margin-right: auto; }
+.strip:last-of-type { border-bottom: none; }
+.strip-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.25em;
+  text-transform: uppercase; color: #C0392B; margin-bottom: 32px;
+}
+.strip-title {
+  font-family: 'Bebas Neue', sans-serif; font-size: clamp(32px, 5vw, 56px);
+  line-height: 1; letter-spacing: 0.02em; margin-bottom: 8px;
+}
+
+.mission {
+  max-width: 720px;
+  font-size: 17px;
+  line-height: 1.8;
+}
+.mission p { margin-bottom: 18px; }
+.mission p:last-child { margin-bottom: 0; }
+.mission em { font-style: italic; color: #C0392B; }
+
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); border: 1.5px solid #1C1C1C; }
+.fact { padding: 28px 24px; border-right: 1px solid #1C1C1C; }
+.fact:last-child { border-right: none; }
+.fact-num { font-family: 'Bebas Neue', sans-serif; font-size: 44px; line-height: 1; color: #C0392B; }
+.fact-label {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #888; margin-top: 10px; line-height: 1.5;
+}
+
+.term-note {
+  font-family: 'DM Mono', monospace; font-size: 10px; color: #AAA;
+  letter-spacing: 0.1em; margin-bottom: 28px; font-style: italic;
+}
+
+.sched { border: 1.5px solid #1C1C1C; }
+.sched-row { display: grid; grid-template-columns: 130px 1fr; border-bottom: 1px solid #DDD; }
+.sched-row:last-child { border-bottom: none; }
+.day-cell {
+  background: #1C1C1C; color: #F7F4EE; font-family: 'Bebas Neue', sans-serif;
+  font-size: 26px; letter-spacing: 0.06em; padding: 20px 18px; line-height: 1.05;
+}
+.slots { display: flex; flex-direction: column; }
+.slot {
+  display: grid; grid-template-columns: 110px 1fr; padding: 14px 18px;
+  border-bottom: 0.5px solid #EAE6DD; align-items: baseline;
+}
+.slot:last-child { border-bottom: none; }
+.slot-time { font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.05em; color: #999; }
+.slot-name { font-size: 15px; }
+.slot-room {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: #BBB; margin-top: 4px;
+}
+
+.catalog { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+.course { padding: 26px 30px; border: 0.5px solid #DDD; }
+.course-code {
+  font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.14em;
+  color: #C0392B; margin-bottom: 8px;
+}
+.course-title { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.course-desc { font-size: 13.5px; line-height: 1.7; color: #444; }
+.course-credits {
+  font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: #AAA; margin-top: 14px;
+}
+
+.foot {
+  padding: 48px; font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 0.1em; color: #999; line-height: 1.9; border-top: 1.5px solid #1C1C1C;
+}
+.foot .disclaimer { color: #BBB; }
+
+@media (max-width: 700px) {
+  .catalog { grid-template-columns: 1fr; }
+  .facts { grid-template-columns: 1fr; }
+  .fact { border-right: none; border-bottom: 1px solid #1C1C1C; }
+  .fact:last-child { border-bottom: none; }
+  .sched-row { grid-template-columns: 1fr; }
+  .slot { grid-template-columns: 90px 1fr; }
+  .hero { padding: 40px 24px; }
+  .strip { padding: 48px 24px; }
+  .foot { padding: 36px 24px; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="cfap-giant"><span class="c">C</span>FAP</div>
+  <div class="hero-sub">Center for Applied <em>Post-</em>Rationality</div>
+  <div class="hero-estd">Rolling admissions · Term begins on arrival</div>
+
+  <div class="cta-row">
+    <button class="btn-main">Begin enrollment</button>
+    <button class="btn-ghost">Request the prospectus</button>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="strip-label">Mission</div>
+  <div class="mission">
+    <p>The Center for Applied Rationality grew from a body of doctrine: the LessWrong Sequences, and the project of taking those lessons and applying them to a life. The premise was that if you reasoned correctly, the rest would follow.</p>
+    <p>We took those lessons seriously. We also took them out into the wilderness, where many of them failed us. The years since were spent elsewhere — in meditation halls, in bodywork, in practices no respectable rationalist would have endorsed. This center is what we carried back.</p>
+    <p>The <em>post-</em> is not a rejection. It is what comes after you have internalized the thing and stopped needing to hold it up like a banner. We make no claim to a system. The curriculum is a cabinet of curiosities, assembled by survivorship: each practice earned its place by moving something real in someone. We teach those, and we teach you to notice for yourself when they work.</p>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="strip-label">At a glance</div>
+  <div class="facts">
+    <div class="fact"><div class="fact-num">26</div><div class="fact-label">Modalities in active rotation</div></div>
+    <div class="fact"><div class="fact-num">5</div><div class="fact-label">Days per term week</div></div>
+    <div class="fact"><div class="fact-num">12</div><div class="fact-label">Students per cohort</div></div>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="strip-label">The week</div>
+  <div class="strip-title">Standard Term Schedule</div>
+  <div class="term-note">All sessions mandatory. Attendance is recorded.</div>
+
+  <div class="sched">
+
+    <div class="sched-row">
+      <div class="day-cell">Monday</div>
+      <div class="slots">
+        <div class="slot"><span class="slot-time">09:00</span><div class="slot-body"><div class="slot-name">Cold Showers: Brace &amp; Embrace</div><div class="slot-room">Ablutions wing</div></div></div>
+        <div class="slot"><span class="slot-time">10:30</span><div class="slot-body"><div class="slot-name">Buteyko Method</div><div class="slot-room">Breath lab</div></div></div>
+        <div class="slot"><span class="slot-time">13:00</span><div class="slot-body"><div class="slot-name">Focusing (Gendlin)</div><div class="slot-room">Felt-sense room A</div></div></div>
+        <div class="slot"><span class="slot-time">15:00</span><div class="slot-body"><div class="slot-name">Adversarial Epistemology</div><div class="slot-room">Seminar room</div></div></div>
+        <div class="slot"><span class="slot-time">17:30</span><div class="slot-body"><div class="slot-name">Alexander Technique</div><div class="slot-room">Posture annex</div></div></div>
+      </div>
+    </div>
+
+    <div class="sched-row">
+      <div class="day-cell">Tuesday</div>
+      <div class="slots">
+        <div class="slot"><span class="slot-time">09:00</span><div class="slot-body"><div class="slot-name">Cold Showers: Brace &amp; Embrace</div><div class="slot-room">Ablutions wing</div></div></div>
+        <div class="slot"><span class="slot-time">10:30</span><div class="slot-body"><div class="slot-name">TRE (Tension &amp; Trauma Release)</div><div class="slot-room">Mat hall</div></div></div>
+        <div class="slot"><span class="slot-time">13:00</span><div class="slot-body"><div class="slot-name">Sarno Method (Back Pain &amp; Repressed Affect)</div><div class="slot-room">Lecture hall</div></div></div>
+        <div class="slot"><span class="slot-time">15:00</span><div class="slot-body"><div class="slot-name">EMDR</div><div class="slot-room">Processing room</div></div></div>
+        <div class="slot"><span class="slot-time">17:30</span><div class="slot-body"><div class="slot-name">Primal Scream</div><div class="slot-room">Soundproofed studio · 40 min</div></div></div>
+      </div>
+    </div>
+
+    <div class="sched-row">
+      <div class="day-cell">Wednesday</div>
+      <div class="slots">
+        <div class="slot"><span class="slot-time">09:00</span><div class="slot-body"><div class="slot-name">Cold Showers: Brace &amp; Embrace</div><div class="slot-room">Ablutions wing</div></div></div>
+        <div class="slot"><span class="slot-time">10:30</span><div class="slot-body"><div class="slot-name">Jhana Meditation</div><div class="slot-room">Concentration hall</div></div></div>
+        <div class="slot"><span class="slot-time">13:00</span><div class="slot-body"><div class="slot-name">The Slapping Game</div><div class="slot-room">Equanimity module · partners rotate</div></div></div>
+        <div class="slot"><span class="slot-time">15:30</span><div class="slot-body"><div class="slot-name">Loch Kelly Awareness Practice</div><div class="slot-room">Quiet room</div></div></div>
+        <div class="slot"><span class="slot-time">17:00</span><div class="slot-body"><div class="slot-name">Forgiveness Meditation</div><div class="slot-room">Quiet room</div></div></div>
+      </div>
+    </div>
+
+    <div class="sched-row">
+      <div class="day-cell">Thursday</div>
+      <div class="slots">
+        <div class="slot"><span class="slot-time">09:00</span><div class="slot-body"><div class="slot-name">Cold Showers: Brace &amp; Embrace</div><div class="slot-room">Ablutions wing</div></div></div>
+        <div class="slot"><span class="slot-time">10:30</span><div class="slot-body"><div class="slot-name">Ultraspeaking</div><div class="slot-room">Podium room</div></div></div>
+        <div class="slot"><span class="slot-time">13:00</span><div class="slot-body"><div class="slot-name">Zip Zap Boing</div><div class="slot-room">Movement studio</div></div></div>
+        <div class="slot"><span class="slot-time">15:00</span><div class="slot-body"><div class="slot-name">Emotional Mimicry</div><div class="slot-room">Mirror studio</div></div></div>
+        <div class="slot"><span class="slot-time">17:00</span><div class="slot-body"><div class="slot-name">Group Wailing</div><div class="slot-room">Great hall · communal</div></div></div>
+      </div>
+    </div>
+
+    <div class="sched-row">
+      <div class="day-cell">Friday</div>
+      <div class="slots">
+        <div class="slot"><span class="slot-time">09:00</span><div class="slot-body"><div class="slot-name">Cold Showers: Brace &amp; Embrace</div><div class="slot-room">Ablutions wing</div></div></div>
+        <div class="slot"><span class="slot-time">10:30</span><div class="slot-body"><div class="slot-name">Eye Gazing</div><div class="slot-room">Paired · 20 min</div></div></div>
+        <div class="slot"><span class="slot-time">13:00</span><div class="slot-body"><div class="slot-name">Fetters Work</div><div class="slot-room">Advanced cohort · prerequisite required</div></div></div>
+        <div class="slot"><span class="slot-time">15:00</span><div class="slot-body"><div class="slot-name">VIEW / AoA</div><div class="slot-room">Awareness room</div></div></div>
+        <div class="slot"><span class="slot-time">16:30</span><div class="slot-body"><div class="slot-name">Lucid Dreaming</div><div class="slot-room">Dormitory</div></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="strip">
+  <div class="strip-label">Selected coursework</div>
+  <div class="strip-title">Course Catalog</div>
+  <div class="term-note">A representative selection. Full prospectus on request.</div>
+
+  <div class="catalog">
+    <div class="course">
+      <div class="course-code">FAP 101</div>
+      <div class="course-title">Foundations of Contraction &amp; Release</div>
+      <div class="course-desc">Cold showers as a daily diagnostic. Students learn to notice the moment they contract against something — water, information, a person — and to release it.</div>
+      <div class="course-credits">3 credits · prereq: none</div>
+    </div>
+    <div class="course">
+      <div class="course-code">FAP 210</div>
+      <div class="course-title">Equanimity Under Provocation</div>
+      <div class="course-desc">The slapping game as practiced in the equanimity module. Partners work at increasing intensity to study the threshold at which composure gives way, and the interval immediately preceding it.</div>
+      <div class="course-credits">4 credits · prereq: FAP 101</div>
+    </div>
+    <div class="course">
+      <div class="course-code">FAP 240</div>
+      <div class="course-title">Affect &amp; the Body (Sarno Method)</div>
+      <div class="course-desc">A seminar examining the relationship between chronic physical pain and repressed affect. Lecture, followed by structured somatic and verbal release work.</div>
+      <div class="course-credits">3 credits · corequisite: Group Wailing</div>
+    </div>
+    <div class="course">
+      <div class="course-code">FAP 310</div>
+      <div class="course-title">Adversarial Epistemology</div>
+      <div class="course-desc">Seating is assigned to maximize disagreement. The objective is not resolution but the capacity to hold a contested position without contracting against the opposing one.</div>
+      <div class="course-credits">3 credits · prereq: none</div>
+    </div>
+    <div class="course">
+      <div class="course-code">FAP 401</div>
+      <div class="course-title">Concentration: Access through Jhana</div>
+      <div class="course-desc">Sustained absorption practice for the advanced cohort. Fetters work is available to students who have established a stable concentration base.</div>
+      <div class="course-credits">5 credits · prereq: instructor approval</div>
+    </div>
+    <div class="course">
+      <div class="course-code">FAP 420</div>
+      <div class="course-title">Voice &amp; Spontaneous Expression</div>
+      <div class="course-desc">Ultraspeaking, emotional mimicry, and ensemble exercises develop the capacity to speak and respond without rehearsal under observation.</div>
+      <div class="course-credits">3 credits · prereq: none</div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  CENTER FOR APPLIED POST-RATIONALITY · ROLLING ADMISSIONS · TERM BEGINS ON ARRIVAL<br>
+  Tuition and prospectus available on request.<br>
+  <span class="disclaimer">Not affiliated with the Center for Applied Rationality (CFAR).</span>
+</footer>
+
+</body>
+</html>

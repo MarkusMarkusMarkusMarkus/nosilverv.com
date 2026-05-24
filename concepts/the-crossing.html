@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Crossing — Fellowship in Phenomenological Description</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,300;1,9..144,400&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4efe6;
+    --paper-deep:#ebe3d4;
+    --ink:#23201b;
+    --ink-soft:#4a4438;
+    --ink-faint:#857c6a;
+    --rule:#c9bfa9;
+    --accent:#7c1f12;
+    --accent-soft:#a8412c;
+    --gold:#9a7b3f;
+    --measure:34rem;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Newsreader',Georgia,serif;
+    font-weight:400;
+    font-size:1.18rem;
+    line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  /* paper grain */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  .wrap{position:relative;z-index:1}
+
+  /* ---------- type ---------- */
+  h1,h2,h3,.display{font-family:'Fraunces',serif;font-weight:400;line-height:1.04;letter-spacing:-0.01em}
+  .eyebrow{
+    font-family:'Fraunces',serif;
+    font-size:.74rem;
+    letter-spacing:.42em;
+    text-transform:uppercase;
+    color:var(--accent);
+    font-weight:500;
+  }
+  em,i{font-style:italic}
+
+  /* ---------- masthead ---------- */
+  header.masthead{
+    max-width:72rem;margin:0 auto;
+    padding:2.4rem 2.2rem 0;
+    display:flex;justify-content:space-between;align-items:baseline;
+    border-bottom:1px solid var(--rule);
+  }
+  .mast-mark{font-family:'Fraunces',serif;font-size:1.05rem;letter-spacing:.2em;text-transform:uppercase}
+  .mast-mark b{font-weight:600}
+  .mast-meta{font-size:.78rem;color:var(--ink-faint);letter-spacing:.08em;text-transform:uppercase}
+
+  /* ---------- hero ---------- */
+  .hero{
+    max-width:72rem;margin:0 auto;
+    padding:5.5rem 2.2rem 4rem;
+    position:relative;
+  }
+  .hero .eyebrow{display:block;margin-bottom:1.8rem;
+    opacity:0;animation:rise .9s .1s both;}
+  .hero h1{
+    font-size:clamp(2.9rem,8.5vw,6.6rem);
+    font-weight:300;
+    max-width:18ch;
+    margin-bottom:1.6rem;
+  }
+  .hero h1 .em{font-style:italic;color:var(--accent)}
+  .hero h1 span{display:inline-block;opacity:0;animation:rise 1s both}
+  .hero h1 span:nth-child(1){animation-delay:.18s}
+  .hero h1 span:nth-child(2){animation-delay:.30s}
+  .hero h1 span:nth-child(3){animation-delay:.42s}
+  .hero h1 span:nth-child(4){animation-delay:.54s}
+  .hero h1 span:nth-child(5){animation-delay:.66s}
+  .hero-lede{
+    font-size:1.42rem;
+    font-weight:300;
+    max-width:38rem;
+    color:var(--ink-soft);
+    line-height:1.5;
+    opacity:0;animation:rise 1s .8s both;
+  }
+  .hero-lede .drop{
+    float:left;
+    font-family:'Fraunces',serif;
+    font-size:4.4rem;
+    line-height:.78;
+    padding:.18rem .12rem 0 0;
+    color:var(--accent);
+    font-weight:400;
+  }
+
+  @keyframes rise{from{opacity:0;transform:translateY(1.4rem)}to{opacity:1;transform:translateY(0)}}
+
+  /* decorative jhana orb */
+  .orb{
+    position:absolute;right:-4rem;top:3rem;width:24rem;height:24rem;
+    border-radius:50%;
+    background:radial-gradient(circle at 38% 34%,#fbf6ec 0%,#e9c98a 26%,#b9863f 55%,#7c1f12 88%);
+    filter:blur(2px);
+    opacity:.0;
+    animation:bloom 2.4s 1.1s both;
+    box-shadow:0 0 120px 30px rgba(154,123,63,.25);
+    pointer-events:none;
+  }
+  @keyframes bloom{from{opacity:0;transform:scale(.6)}to{opacity:.42;transform:scale(1)}}
+
+  /* ---------- thesis ---------- */
+  section{max-width:72rem;margin:0 auto;padding:0 2.2rem}
+  .rule-row{display:flex;align-items:center;gap:1.2rem;margin:4.5rem 0 3rem}
+  .rule-row .num{font-family:'Fraunces',serif;font-style:italic;color:var(--accent);font-size:1.1rem}
+  .rule-row .line{flex:1;height:1px;background:var(--rule)}
+  .rule-row .lbl{font-family:'Fraunces',serif;font-size:.76rem;letter-spacing:.34em;text-transform:uppercase;color:var(--ink-faint)}
+
+  .thesis{
+    display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;
+    align-items:start;
+  }
+  .thesis .big{
+    font-family:'Fraunces',serif;
+    font-weight:300;
+    font-size:clamp(1.8rem,3.6vw,2.7rem);
+    line-height:1.18;
+    letter-spacing:-0.01em;
+  }
+  .thesis .big em{color:var(--accent)}
+  .thesis .body p{margin-bottom:1.15rem;max-width:var(--measure)}
+  .thesis .body p:last-child{margin-bottom:0}
+  .pull{
+    border-left:2px solid var(--accent);
+    padding-left:1.3rem;
+    font-style:italic;
+    color:var(--ink-soft);
+    margin:1.6rem 0;
+  }
+
+  /* ---------- the gap (two columns of failure/promise) ---------- */
+  .gap-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:1rem;border-top:1px solid var(--rule)}
+  .gap-cell{padding:2.2rem 2.2rem 2.4rem;border-bottom:1px solid var(--rule)}
+  .gap-cell:first-child{border-right:1px solid var(--rule)}
+  .gap-cell h3{font-size:1.5rem;font-weight:400;margin-bottom:.9rem}
+  .gap-cell.have h3{color:var(--ink-faint)}
+  .gap-cell.want h3{color:var(--accent)}
+  .gap-cell p{font-size:1.04rem;color:var(--ink-soft);max-width:26rem}
+  .gap-cell .tag{font-family:'Fraunces';font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-faint);display:block;margin-bottom:1rem}
+
+  /* ---------- mechanism / how ---------- */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2.4rem;margin-top:1rem}
+  .step{position:relative;padding-top:2.6rem}
+  .step .idx{
+    position:absolute;top:0;left:0;
+    font-family:'Fraunces';font-style:italic;font-size:2.6rem;
+    color:var(--rule);line-height:1;
+  }
+  .step h3{font-size:1.3rem;font-weight:500;margin-bottom:.6rem}
+  .step p{font-size:1rem;color:var(--ink-soft)}
+
+  /* ---------- specimen / quote block ---------- */
+  .specimen{
+    margin:5rem auto;
+    background:var(--paper-deep);
+    border:1px solid var(--rule);
+    padding:3.2rem clamp(1.6rem,5vw,4rem);
+    max-width:62rem;
+    position:relative;
+  }
+  .specimen::before{
+    content:"\201C";
+    position:absolute;top:-1.2rem;left:1.6rem;
+    font-family:'Fraunces';font-size:6rem;color:var(--accent);opacity:.5;line-height:1;
+  }
+  .specimen p{
+    font-family:'Fraunces';font-weight:300;font-style:italic;
+    font-size:clamp(1.3rem,2.6vw,1.85rem);
+    line-height:1.4;
+    color:var(--ink);
+  }
+  .specimen .attr{
+    font-style:normal;font-family:'Newsreader';
+    font-size:.92rem;color:var(--ink-faint);
+    margin-top:1.6rem;letter-spacing:.04em;
+  }
+  .specimen .attr b{color:var(--accent-soft);font-weight:500}
+
+  /* ---------- the ask / numbers ---------- */
+  .ledger{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--rule);margin-top:1rem}
+  .ledger .fig{padding:2.4rem 1.8rem;border-right:1px solid var(--rule)}
+  .ledger .fig:last-child{border-right:none}
+  .ledger .n{font-family:'Fraunces';font-weight:300;font-size:3.1rem;color:var(--accent);line-height:1}
+  .ledger .k{font-size:.94rem;color:var(--ink-soft);margin-top:.7rem;display:block}
+  .ledger .sub{font-size:.78rem;color:var(--ink-faint);margin-top:.3rem;display:block}
+
+  .budget{margin-top:2.4rem;max-width:var(--measure)}
+  .budget-line{display:flex;justify-content:space-between;padding:.7rem 0;border-bottom:1px dotted var(--rule);font-size:1rem}
+  .budget-line span:last-child{font-family:'Fraunces';color:var(--ink-faint)}
+  .budget-line.total{border-bottom:none;border-top:2px solid var(--ink);margin-top:.4rem;font-family:'Fraunces';font-size:1.1rem}
+  .budget-line.total span:last-child{color:var(--accent)}
+
+  /* ---------- cta ---------- */
+  .cta{
+    text-align:center;margin:6rem auto 4rem;max-width:46rem;
+  }
+  .cta h2{font-size:clamp(2.2rem,5vw,3.4rem);font-weight:300;margin-bottom:1.4rem}
+  .cta h2 em{color:var(--accent)}
+  .cta p{color:var(--ink-soft);font-size:1.15rem;margin-bottom:2.4rem;max-width:34rem;margin-left:auto;margin-right:auto}
+  .btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+  .btn{
+    font-family:'Fraunces';font-size:.96rem;letter-spacing:.04em;
+    padding:1rem 2.2rem;border:1px solid var(--ink);
+    text-decoration:none;color:var(--ink);background:transparent;
+    transition:all .3s ease;cursor:pointer;
+  }
+  .btn.primary{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+  .btn.primary:hover{background:#5e160c;border-color:#5e160c}
+  .btn:hover{background:var(--ink);color:var(--paper)}
+
+  /* ---------- footer ---------- */
+  footer{
+    border-top:1px solid var(--rule);
+    max-width:72rem;margin:3rem auto 0;padding:2.5rem 2.2rem 4rem;
+    display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:1rem;
+    font-size:.82rem;color:var(--ink-faint);letter-spacing:.04em;
+  }
+  footer .colophon{max-width:30rem;font-style:italic;line-height:1.5}
+
+  /* ---------- fig. 1 venn ---------- */
+  .figure{
+    max-width:46rem;margin:4.5rem auto 1rem;
+    text-align:center;
+  }
+  .figure svg{width:100%;height:auto;max-width:38rem;overflow:visible}
+  .figure .cap{
+    font-family:'Fraunces',serif;
+    font-size:.92rem;
+    font-style:italic;
+    color:var(--ink-faint);
+    margin-top:1.4rem;
+    letter-spacing:.01em;
+  }
+  .figure .cap b{font-style:normal;font-weight:500;color:var(--ink-soft);letter-spacing:.04em}
+  .venn-label{font-family:'Fraunces',serif;font-size:15px;fill:var(--ink-soft)}
+  .venn-sub{font-family:'Newsreader',serif;font-size:12.5px;fill:var(--ink-faint);font-style:italic}
+  .venn-here{font-family:'Newsreader',serif;font-size:12px;fill:var(--accent);font-style:italic}
+
+  /* reveal on scroll */
+  .reveal{opacity:0;transform:translateY(1.6rem);transition:opacity .9s ease,transform .9s ease}
+  .reveal.in{opacity:1;transform:none}
+
+  @media(max-width:760px){
+    body{font-size:1.1rem}
+    .thesis{grid-template-columns:1fr;gap:1.8rem}
+    .gap-grid{grid-template-columns:1fr}
+    .gap-cell:first-child{border-right:none}
+    .steps{grid-template-columns:1fr;gap:2.6rem}
+    .ledger{grid-template-columns:1fr}
+    .ledger .fig{border-right:none;border-bottom:1px solid var(--rule)}
+    .ledger .fig:last-child{border-bottom:none}
+    .orb{display:none}
+    header.masthead{flex-direction:column;gap:.4rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="mast-mark"><b>The Crossing</b></div>
+    <div class="mast-meta">A Fellowship Proposal · No. 01</div>
+  </header>
+
+  <div class="hero">
+    <div class="orb"></div>
+    <span class="eyebrow">Phenomenology · Contemplative Practice · Prose</span>
+    <h1>
+      <span>Give</span> <span>our</span> <span>finest <em class="em">describers</em></span> <span>something</span> <span>worth describing.</span>
+    </h1>
+    <p class="hero-lede">
+      <span class="drop">I</span>magine Proust, a week into advanced jhāna practice, sitting down to describe
+      the state from the inside — and writing it down before the memory cooled.
+    </p>
+  </div>
+
+  <section>
+    <div class="rule-row reveal">
+      <span class="num">i.</span><span class="lbl">The Premise</span><span class="line"></span>
+    </div>
+    <div class="thesis reveal">
+      <div class="big">
+        The deepest states of human consciousness have been mapped mostly by people
+        whose gift was the practice, not the prose — and the descriptions we have are
+        written for those already <em>inside</em>.
+      </div>
+      <div class="body">
+        <p>
+          We have an extraordinary surplus of contemplative attainment locked inside
+          traditions whose vocabulary is technical, doctrinal, or simply ancient. And
+          we have a separate surplus of living writers — phenomenologists in the truest
+          sense — whose entire craft is the rendering of interior experience into
+          language that a stranger can feel.
+        </p>
+        <p>
+          These two surpluses almost never meet. The monk has the territory but not the
+          map-making hand. The novelist has the hand but has never crossed the border.
+        </p>
+        <div class="pull">
+          What if we simply paid for the crossing?
+        </div>
+        <p>
+          Modern intensive programs can reliably induce states — the jhānas, in
+          particular — that once took years of seclusion, in a retreat measured in days.
+          The bottleneck is no longer access. It is description.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rule-row reveal">
+      <span class="num">ii.</span><span class="lbl">The Gap</span><span class="line"></span>
+    </div>
+    <div class="gap-grid reveal">
+      <div class="gap-cell have">
+        <span class="tag">What we have</span>
+        <h3>Maps drawn in the dark</h3>
+        <p>
+          Suttas, commentaries, retreat manuals. Rigorous, often beautiful in their own
+          register — and almost impossible for an outsider to inhabit. The fourth jhāna
+          described as "purity of equanimity and mindfulness." Accurate. Inert.
+        </p>
+      </div>
+      <div class="gap-cell want">
+        <span class="tag">What we want</span>
+        <h3>The thing rendered felt</h3>
+        <p>
+          A page that makes the reader's own attention shift while reading it. The
+          texture of access concentration. The exact moment the breath stops being an
+          object. Written by someone whose job, for thirty years, has been to make
+          you feel what you have not felt.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="rule-row reveal">
+      <span class="num">iii.</span><span class="lbl">The Mechanism</span><span class="line"></span>
+    </div>
+    <div class="steps reveal">
+      <div class="step">
+        <span class="idx">01</span>
+        <h3>Select</h3>
+        <p>
+          Identify a small set of living writers with a demonstrated gift for
+          phenomenological prose — the rare ones who can describe a state from the
+          inside without flattening it. Curiosity required; prior practice not.
+        </p>
+      </div>
+      <div class="step">
+        <span class="idx">02</span>
+        <h3>Send</h3>
+        <p>
+          Fund a place on a short, well-run intensive — the Jhourney-style retreats
+          that reliably induce deep concentration states in days rather than decades.
+          Travel, fee, and the time to do nothing else.
+        </p>
+      </div>
+      <div class="step">
+        <span class="idx">03</span>
+        <h3>Capture</h3>
+        <p>
+          A modest commission for the writing that follows, produced while the
+          experience is still warm. No house style. No doctrinal framing imposed. Their
+          instrument, their account, published openly.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="specimen reveal">
+    <p>
+      The breath had been a thing I was doing, and then — without a seam I could find —
+      it became a thing that was happening some distance from me, the way you might
+      notice a tide has gone out only by the new quiet. What arrived in the vacated
+      place was not blankness. It was almost embarrassingly like pleasure, but pleasure
+      with no object, pleasure that had forgotten what it was for.
+    </p>
+    <p class="attr">
+      &mdash; From <b>specimen account no. 04</b>, fourth jhāna, recorded on the
+      third evening. Cohort writings are held on file pending publication.
+    </p>
+  </div>
+
+  <section>
+    <div class="rule-row reveal">
+      <span class="num">iv.</span><span class="lbl">The Ask</span><span class="line"></span>
+    </div>
+    <div class="ledger reveal">
+      <div class="fig">
+        <div class="n">6</div>
+        <span class="k">Writers in the first cohort</span>
+        <span class="sub">Each fully funded, end to end</span>
+      </div>
+      <div class="fig">
+        <div class="n">~7 days</div>
+        <span class="k">Per intensive retreat</span>
+        <span class="sub">Short by design — that is the point</span>
+      </div>
+      <div class="fig">
+        <div class="n">$72k</div>
+        <span class="k">To run the pilot</span>
+        <span class="sub">A library's worth of first-person territory</span>
+      </div>
+    </div>
+
+    <div class="budget reveal">
+      <div class="budget-line"><span>Retreat fees &amp; lodging (6 × ~$3,800)</span><span>$22,800</span></div>
+      <div class="budget-line"><span>Travel</span><span>$9,000</span></div>
+      <div class="budget-line"><span>Writing commissions (6 × ~$5,000)</span><span>$30,000</span></div>
+      <div class="budget-line"><span>Editing, publication &amp; the small website</span><span>$6,200</span></div>
+      <div class="budget-line"><span>Reserve</span><span>$4,000</span></div>
+      <div class="budget-line total"><span>Total, first cohort</span><span>$72,000</span></div>
+    </div>
+  </section>
+
+  <div class="cta reveal">
+    <h2>Fund <em>the crossing.</em></h2>
+    <p>
+      Sponsor a writer, underwrite the cohort, or nominate a describer you believe
+      should be sent. The output belongs to everyone: an open collection of the
+      interior, written by the people best equipped to take you there.
+    </p>
+    <div class="btns">
+      <a href="#" class="btn primary">Back the pilot</a>
+      <a href="#" class="btn">Nominate a writer</a>
+    </div>
+  </div>
+
+  <footer>
+    <div class="colophon">
+      <em>The Crossing</em> · Fellowship Office · Correspondence by invitation.
+      All figures denominated for the first cohort.
+    </div>
+    <div>No. 01 · MMXXVI</div>
+  </footer>
+
+</div>
+
+<script>
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+  },{threshold:.14});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
