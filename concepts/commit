@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMMIT — Credible Conditional Commitments</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0f0e0c;
+    --paper: #f5f0e8;
+    --paper2: #ede8de;
+    --red: #c8321a;
+    --gold: #b8860b;
+    --muted: #7a7267;
+    --rule: #ccc5b5;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    border-bottom: 2px solid var(--ink);
+    padding: 0 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    background: var(--paper);
+    z-index: 50;
+  }
+  .nav-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+  }
+  .nav-links {
+    display: flex; gap: 2rem; list-style: none;
+  }
+  .nav-links a {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-decoration: none;
+    text-transform: uppercase;
+    font-family: 'DM Mono', monospace;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 18px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+
+  /* ── DATELINE ── */
+  .dateline {
+    border-bottom: 1px solid var(--rule);
+    padding: 6px 2.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 5rem 2.5rem 3rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .hero-left {}
+
+  .kicker {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--red);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .kicker::before {
+    content: '';
+    display: inline-block;
+    width: 24px;
+    height: 2px;
+    background: var(--red);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 900;
+    font-size: clamp(3.2rem, 6vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.8rem;
+    color: var(--ink);
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--red);
+  }
+
+  .hero-body {
+    font-size: 17px;
+    line-height: 1.7;
+    color: #3a3630;
+    max-width: 480px;
+    margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 28px;
+    border: 2px solid var(--ink);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: var(--red); border-color: var(--red); }
+
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 14px 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .btn-ghost:hover { color: var(--ink); }
+
+  /* ── HERO RIGHT: LIVE CARD ── */
+  .hero-right {
+    padding-top: 1rem;
+  }
+
+  .live-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .live-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    animation: pulse 2s ease infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .card {
+    background: #fff;
+    border: 1.5px solid var(--ink);
+    padding: 1.6rem;
+  }
+  .card-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    align-items: flex-start;
+  }
+  .card-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    background: var(--red);
+    color: #fff;
+    padding: 3px 8px;
+    font-weight: 500;
+  }
+  .card-timer {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .card-loc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+  }
+
+  .progress-wrap { margin-bottom: 6px; }
+  .progress-bg {
+    background: var(--paper2);
+    height: 5px;
+    width: 100%;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--ink);
+    width: 68%;
+    position: relative;
+  }
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -3px;
+    width: 2px; height: 11px;
+    background: var(--red);
+  }
+
+  .progress-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .progress-stats strong { color: var(--ink); }
+
+  .card-divider {
+    border: none;
+    border-top: 1px solid var(--rule);
+    margin: 1.2rem 0;
+  }
+  .card-pool {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .pool-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 2px;
+  }
+  .pool-amount {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .card-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.15s;
+  }
+  .card-btn:hover { background: var(--red); }
+
+  /* ── RULE QUOTE ── */
+  .rule-section {
+    border-bottom: 1px solid var(--rule);
+    padding: 2.5rem 2.5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    font-style: italic;
+    line-height: 1.4;
+    color: var(--ink);
+    border-left: 3px solid var(--red);
+    padding-left: 1.8rem;
+    max-width: 700px;
+  }
+  blockquote cite {
+    display: block;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-style: normal;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-top: 0.8rem;
+  }
+
+  /* ── HOW IT WORKS ── */
+  .how {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem;
+    border-bottom: 2px solid var(--ink);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+  .step {
+    padding: 2rem 2rem 2rem 0;
+    border-right: 1px solid var(--rule);
+    padding-right: 2rem;
+  }
+  .step:last-child { border-right: none; padding-right: 0; }
+  .step:not(:first-child) { padding-left: 2rem; }
+
+  .step-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--rule);
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+  .step-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+  .step-body {
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4a4540;
+  }
+  .step-body strong { color: var(--ink); font-weight: 500; }
+
+  /* ── USE CASES ── */
+  .cases {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .cases-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5px;
+    background: var(--rule);
+    border: 1.5px solid var(--ink);
+    margin-top: 1rem;
+  }
+
+  .case-item {
+    background: var(--paper);
+    padding: 1.8rem;
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .case-item:hover { background: #fff; }
+
+  .case-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .case-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .case-body {
+    font-size: 13px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+
+  /* ── GAME THEORY BOX ── */
+  .theory {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 4rem 2.5rem;
+    border-bottom: 2px solid var(--ink);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .theory-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    font-weight: 900;
+    line-height: 1.1;
+    margin-bottom: 1.2rem;
+  }
+  .theory-text h2 em { font-style: italic; color: var(--red); }
+  .theory-text p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: #3a3630;
+    margin-bottom: 1rem;
+  }
+
+  .payoff-matrix {
+    border: 1.5px solid var(--ink);
+    background: #fff;
+    overflow: hidden;
+  }
+  .matrix-header {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    padding: 10px 14px;
+  }
+  .matrix-body { padding: 1.2rem; }
+
+  .matrix-row {
+    display: flex;
+    margin-bottom: 12px;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .matrix-row:last-child { margin-bottom: 0; }
+  .matrix-actor {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    width: 90px;
+    flex-shrink: 0;
+    padding-top: 2px;
+    text-transform: uppercase;
+  }
+  .matrix-outcome {
+    flex: 1;
+  }
+  .matrix-outcome .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--ink);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    margin-bottom: 2px;
+  }
+  .matrix-outcome .sub {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .matrix-outcome.good .label { color: #2a7a2a; }
+  .matrix-outcome.bad .label { color: var(--red); }
+
+  /* ── SOCIAL PROOF ── */
+  .proof {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 4rem 2.5rem;
+  }
+  .proof-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .proof-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3rem;
+    margin-top: 2.5rem;
+  }
+  .proof-stat {
+    border-left: 2px solid #333;
+    padding-left: 1.2rem;
+  }
+  .proof-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--paper);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .proof-desc {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: #666;
+    text-transform: uppercase;
+  }
+  .proof-section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: #555;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .proof-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #2a2a2a;
+  }
+
+  /* ── CTA ── */
+  .cta-section {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 2.5rem;
+    text-align: center;
+    border-bottom: 2px solid var(--ink);
+  }
+  .cta-section h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+  .cta-section h2 em { font-style: italic; color: var(--red); }
+  .cta-sub {
+    font-size: 16px;
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
+  }
+  .email-row {
+    display: flex;
+    gap: 0;
+    max-width: 420px;
+    margin: 0 auto 1rem;
+    border: 2px solid var(--ink);
+  }
+  .email-row input {
+    flex: 1;
+    padding: 14px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    border: none;
+    outline: none;
+    background: #fff;
+    color: var(--ink);
+  }
+  .email-row input::placeholder { color: #bbb; }
+  .email-row button {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 14px 20px;
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: background 0.15s;
+  }
+  .email-row button:hover { background: var(--red); }
+  .cta-fine {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: #bbb;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 2px solid var(--ink);
+    padding: 1.5rem 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .footer-logo {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+  }
+  .footer-note {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-left > * { animation: fadeUp 0.6s ease both; }
+  .hero-left > *:nth-child(1) { animation-delay: 0.05s; }
+  .hero-left > *:nth-child(2) { animation-delay: 0.15s; }
+  .hero-left > *:nth-child(3) { animation-delay: 0.25s; }
+  .hero-left > *:nth-child(4) { animation-delay: 0.35s; }
+  .hero-right { animation: fadeUp 0.6s 0.3s ease both; }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 0;
+    overflow: hidden;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .ticker-track {
+    display: flex;
+    gap: 3rem;
+    animation: ticker 22s linear infinite;
+    white-space: nowrap;
+    width: max-content;
+  }
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .ticker-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ticker-item span { color: #fff; }
+  .ticker-sep { color: #333; }
+
+  @media (max-width: 768px) {
+    .hero { grid-template-columns: 1fr; gap: 2rem; }
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--rule); padding: 1.5rem 0; }
+    .step:not(:first-child) { padding-left: 0; }
+    .theory { grid-template-columns: 1fr; gap: 2.5rem; }
+    .cases-grid { grid-template-columns: 1fr; }
+    .proof-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+    nav .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">COMMIT</div>
+  <ul class="nav-links">
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#cases">Use cases</a></li>
+    <li><a href="#theory">Why it works</a></li>
+  </ul>
+  <button class="nav-cta">Get early access</button>
+</nav>
+
+<!-- DATELINE -->
+<div class="dateline">
+  <span>Lisbon · March 2026</span>
+  <span>Solving collective action since the prisoner's dilemma</span>
+</div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-track">
+    <div class="ticker-item">🟢 Climate March, Lisbon &nbsp;·&nbsp; <span>341 committed</span> &nbsp;·&nbsp; €8,240 staked</div>
+    <div class="ticker-item">🟡 Founders Dinner, Porto &nbsp;·&nbsp; <span>27/30 — near quorum</span> &nbsp;·&nbsp; €1,350 staked</div>
+    <div class="ticker-item">🟢 Startup Demo Night &nbsp;·&nbsp; <span>89 committed</span> &nbsp;·&nbsp; €3,100 staked</div>
+    <div class="ticker-item">🟢 Tech Workers Assembly &nbsp;·&nbsp; <span>203 committed</span> &nbsp;·&nbsp; €5,600 staked</div>
+    <div class="ticker-item">🟢 Climate March, Lisbon &nbsp;·&nbsp; <span>341 committed</span> &nbsp;·&nbsp; €8,240 staked</div>
+    <div class="ticker-item">🟡 Founders Dinner, Porto &nbsp;·&nbsp; <span>27/30 — near quorum</span> &nbsp;·&nbsp; €1,350 staked</div>
+    <div class="ticker-item">🟢 Startup Demo Night &nbsp;·&nbsp; <span>89 committed</span> &nbsp;·&nbsp; €3,100 staked</div>
+    <div class="ticker-item">🟢 Tech Workers Assembly &nbsp;·&nbsp; <span>203 committed</span> &nbsp;·&nbsp; €5,600 staked</div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="kicker">A new coordination primitive</div>
+    <h1>Show up,<br>or <em>pay up.</em></h1>
+    <p class="hero-body">
+      Collective action fails because no one wants to be the only one who shows up. COMMIT solves this with credible conditional commitments — stake money on your presence, coordinate publicly, and let the incentives do the rest.
+    </p>
+    <div class="hero-actions">
+      <a href="#waitlist" class="btn-primary">Request early access</a>
+      <a href="#how" class="btn-ghost">See how it works ↓</a>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="live-label">
+      <div class="live-dot"></div>
+      LIVE COMMITMENT
+    </div>
+    <div class="card">
+      <div class="card-meta">
+        <span class="card-tag">PROTEST</span>
+        <div class="card-timer">14d 6h</div>
+      </div>
+      <div class="card-title">Climate March</div>
+      <div class="card-loc">📍 Praça do Comércio, Lisbon · Mar 21, 14:00</div>
+      <div class="progress-wrap">
+        <div class="progress-bg"><div class="progress-fill"></div></div>
+        <div class="progress-stats">
+          <span><strong>341</strong> / 500 committed</span>
+          <span>68% to quorum</span>
+        </div>
+      </div>
+      <hr class="card-divider">
+      <div class="card-pool">
+        <div>
+          <div class="pool-label">TOTAL POOL</div>
+          <div class="pool-amount">€8,240</div>
+        </div>
+        <button class="card-btn">STAKE & COMMIT →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PULL QUOTE -->
+<div class="rule-section">
+  <blockquote>
+    "The map is the territory — in social domains, a credible commitment <em>is</em> the coordination."
+    <cite>— The problem COMMIT was built to solve</cite>
+  </blockquote>
+</div>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-label">How it works</div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Stake your presence</div>
+      <p class="step-body">
+        Commit €X to be at <strong>[PLACE]</strong> at <strong>[TIME]</strong>. The amount is yours to choose — even €5 is enough skin in the game. Your commitment and everyone else's is fully public.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Watch the pool grow</div>
+      <p class="step-body">
+        As others commit, the total pool grows. You can see exactly <strong>how many people</strong> are in and <strong>how much is at stake</strong>. When the threshold is hit, everyone knows the event is happening.
+      </p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Show up, or forfeit</div>
+      <p class="step-body">
+        At the time of the event, enable geolocation to confirm you're there. If you show up and others don't, you receive a <strong>pro-rata share</strong> of their forfeited stakes. This makes showing up the dominant strategy.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section class="cases" id="cases">
+  <div class="section-label">What COMMIT is for</div>
+  <div class="cases-grid">
+    <div class="case-item">
+      <div class="case-icon">✊</div>
+      <div class="case-title">Political organising</div>
+      <p class="case-body">Bootstrap protest attendance. When enough people commit credibly, momentum becomes self-fulfilling. Turns "I'll go if others go" into a binding mechanism.</p>
+    </div>
+    <div class="case-item">
+      <div class="case-icon">🍽️</div>
+      <div class="case-title">Social gatherings</div>
+      <p class="case-body">End the plague of last-minute cancellations. Dinner parties, meetups, reunions — when everyone has skin in the game, they actually show up.</p>
+    </div>
+    <div class="case-item">
+      <div class="case-icon">🚀</div>
+      <div class="case-title">Event bootstrapping</div>
+      <p class="case-body">Validate demand before committing to a venue. Reach a quorum threshold first, then lock in the booking — the investor soft-circle model for events.</p>
+    </div>
+    <div class="case-item">
+      <div class="case-icon">🤝</div>
+      <div class="case-title">Community coordination</div>
+      <p class="case-body">Local governance, neighbourhood action, industry assemblies. Any situation where collective presence matters and the "I'll go if others go" problem is blocking action.</p>
+    </div>
+  </div>
+</section>
+
+<!-- GAME THEORY -->
+<section class="theory" id="theory">
+  <div class="theory-text">
+    <h2>Why it actually <em>works</em></h2>
+    <p>
+      The classic collective action problem: everyone wants the outcome but nobody wants to bear the cost alone. The result is paralysis — even when a clear majority wants to act.
+    </p>
+    <p>
+      COMMIT resolves this with a mechanism borrowed from venture capital's soft-circling practice: conditional commitments that activate simultaneously. Your commitment only binds if enough others commit too.
+    </p>
+    <p>
+      Once staked, the dominant strategy shifts. You've already paid the entry cost. Now showing up is free, and no-shows are penalised. The equilibrium is everyone showing up.
+    </p>
+  </div>
+
+  <div>
+    <div class="payoff-matrix">
+      <div class="matrix-header">PAYOFF MATRIX · STAKED PLAYER</div>
+      <div class="matrix-body">
+        <div class="matrix-row">
+          <div class="matrix-actor">You show up</div>
+          <div class="matrix-outcome good">
+            <div class="label">↑ OPTIMAL</div>
+            <div class="sub">Keep stake + share of any no-show forfeitures</div>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-actor">You don't show up</div>
+          <div class="matrix-outcome bad">
+            <div class="label">↓ COSTLY</div>
+            <div class="sub">Stake forfeited, redistributed to those who showed</div>
+          </div>
+        </div>
+        <div class="matrix-row">
+          <div class="matrix-actor">Nobody stakes</div>
+          <div class="matrix-outcome">
+            <div class="label">– STATUS QUO</div>
+            <div class="sub">Coordination fails. Event doesn't happen. Nothing changes.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOCIAL PROOF -->
+<section class="proof">
+  <div class="proof-inner">
+    <div class="proof-section-label">By the numbers</div>
+    <div class="proof-grid">
+      <div class="proof-stat">
+        <div class="proof-num">€48k</div>
+        <div class="proof-desc">staked across active events</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-num">1,200+</div>
+        <div class="proof-desc">commitments made in beta</div>
+      </div>
+      <div class="proof-stat">
+        <div class="proof-num">94%</div>
+        <div class="proof-desc">show-up rate among stakers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA / WAITLIST -->
+<section class="cta-section" id="waitlist">
+  <h2>Ready to <em>commit?</em></h2>
+  <p class="cta-sub">
+    Join the waitlist. Be the first to coordinate events where everyone actually shows up.
+  </p>
+  <div class="email-row">
+    <input type="email" placeholder="your@email.com">
+    <button>Get access →</button>
+  </div>
+  <div class="cta-fine">No spam. Just early access when we open.</div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">COMMIT</div>
+  <div class="footer-note">Coordination infrastructure · 2026</div>
+</footer>
+
+</body>
+</html>
