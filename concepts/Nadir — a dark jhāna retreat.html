@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nadir — a dark jhāna retreat</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap">
+<style>
+  :root{
+    --bg:#E4E1D8;
+    --ink:#211F1C;
+    --dim:#6E6A60;
+    --line:#C6C2B6;
+    --bruise:#4A3B55;
+    --bruise-soft:#8E7F9C;
+    --card:#DBD8CD;
+    box-sizing:border-box;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#191821;
+      --ink:#D8D4C9;
+      --dim:#8A8694;
+      --line:#332F3E;
+      --bruise:#A995C2;
+      --bruise-soft:#6E6180;
+      --card:#201E2A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#191821;
+    --ink:#D8D4C9;
+    --dim:#8A8694;
+    --line:#332F3E;
+    --bruise:#A995C2;
+    --bruise-soft:#6E6180;
+    --card:#201E2A;
+  }
+  html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+  *,*::before,*::after{box-sizing:inherit}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Spectral', Georgia, 'Times New Roman', serif;
+    font-weight:300;
+    line-height:1.65;
+    font-size:17px;
+  }
+  a{color:inherit}
+  .wrap{max-width:920px;margin:0 auto;padding:0 24px}
+
+  header.site{
+    display:flex;justify-content:space-between;align-items:baseline;
+    padding:28px 0 0;
+  }
+  .mark{font-style:italic;font-size:1.05rem;letter-spacing:.04em}
+  .mark span{color:var(--bruise)}
+  nav a{font-size:.85rem;color:var(--dim);text-decoration:none;margin-left:1.4em}
+  nav a:hover{color:var(--ink)}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--bruise);outline-offset:3px}
+
+  /* hero */
+  .hero{padding:11vh 0 9vh;text-align:center}
+  .rings{
+    width:150px;height:150px;margin:0 auto 3rem;position:relative;
+  }
+  .rings i{
+    position:absolute;inset:0;border-radius:50%;
+    border:1px solid var(--bruise-soft);
+    animation:sink 7s cubic-bezier(.4,0,.6,1) infinite;
+    opacity:0;
+  }
+  .rings i:nth-child(2){animation-delay:1.75s}
+  .rings i:nth-child(3){animation-delay:3.5s}
+  .rings i:nth-child(4){animation-delay:5.25s}
+  @keyframes sink{
+    0%{transform:scale(1.15);opacity:0}
+    12%{opacity:.85}
+    100%{transform:scale(.06);opacity:0}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .rings i{animation:none;opacity:.5}
+    .rings i:nth-child(2){transform:scale(.75)}
+    .rings i:nth-child(3){transform:scale(.5)}
+    .rings i:nth-child(4){transform:scale(.22)}
+    html{scroll-behavior:auto}
+  }
+  h1{
+    font-weight:300;font-style:italic;
+    font-size:clamp(2.4rem,6.5vw,4.2rem);
+    line-height:1.12;margin:0 0 1.1rem;
+    letter-spacing:-.01em;
+  }
+  .hero p.sub{
+    max-width:34em;margin:0 auto 2.4rem;color:var(--dim);font-size:1.05rem;
+  }
+  .cta{
+    display:inline-block;
+    font-family:inherit;font-size:1rem;font-style:italic;
+    color:var(--bg);background:var(--bruise);
+    border:none;border-radius:0;
+    padding:.85em 2.2em;cursor:pointer;text-decoration:none;
+  }
+  .cta:hover{background:var(--ink)}
+  .hero .fine{font-size:.8rem;color:var(--dim);margin-top:1.1rem}
+
+  section{padding:4.5rem 0;border-top:1px solid var(--line)}
+  h2{
+    font-weight:400;font-size:1.6rem;margin:0 0 .4rem;letter-spacing:.01em;
+  }
+  .lede{color:var(--dim);max-width:36em;margin:0 0 2.6rem}
+
+  /* jhanas */
+  .jhana{
+    display:grid;grid-template-columns:5.5rem 1fr;gap:0 1.6rem;
+    padding:1.5rem 0;border-top:1px solid var(--line);
+  }
+  .jhana:first-of-type{border-top:none}
+  .jhana .d{
+    font-style:italic;font-size:2rem;color:var(--bruise);line-height:1;
+  }
+  .jhana h3{margin:0 0 .3rem;font-weight:500;font-size:1.05rem}
+  .jhana p{margin:0;color:var(--dim);font-size:.95rem;max-width:44em}
+
+  /* schedule */
+  table{width:100%;border-collapse:collapse;font-size:.95rem}
+  td{padding:.65em 0;border-top:1px solid var(--line);vertical-align:top}
+  td.t{width:6.5em;font-style:italic;color:var(--bruise)}
+  tr:first-child td{border-top:none}
+
+  /* testimonials */
+  .quotes{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+  blockquote{
+    margin:0;background:var(--card);padding:1.5rem 1.6rem;
+    font-style:italic;font-size:1rem;
+  }
+  blockquote footer{font-style:normal;color:var(--dim);font-size:.85rem;margin-top:1rem}
+
+  /* pricing */
+  .tiers{display:grid;gap:1.2rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  .tier{border:1px solid var(--line);padding:1.6rem}
+  .tier h3{margin:0;font-weight:500;font-size:1.05rem}
+  .tier .price{font-style:italic;font-size:1.7rem;margin:.4rem 0 .9rem;color:var(--bruise)}
+  .tier ul{margin:0;padding-left:1.1em;color:var(--dim);font-size:.92rem}
+  .tier li{margin:.3em 0}
+
+  /* faq */
+  .faq dt{font-weight:500;margin-top:1.5rem}
+  .faq dd{margin:.3rem 0 0;color:var(--dim)}
+
+  footer.site{
+    border-top:1px solid var(--line);
+    padding:2.5rem 0 3rem;
+    color:var(--dim);font-size:.85rem;
+  }
+  footer.site em{color:var(--bruise)}
+  @media(max-width:560px){
+    .jhana{grid-template-columns:3.4rem 1fr}
+    .jhana .d{font-size:1.5rem}
+    nav a{margin-left:.9em}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="site">
+    <div class="mark">Nadir<span> · a low place</span></div>
+    <nav aria-label="Site">
+      <a href="#method">Method</a><a href="#day">A day</a><a href="#stay">Stay</a><a href="#faq">FAQ</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="rings" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+    <h1>Feel worse,<br>on purpose.</h1>
+    <p class="sub">A seven-day silent retreat into the dysphoric jhānas. While other centers chase bliss, we descend. Guided absorption in dread, grief, hollowness and the Pit — states of profound, stable, concentrated unpleasantness that most practitioners stumble into by accident. You will arrive there deliberately.</p>
+    <a class="cta" href="#stay">Apply to descend</a>
+    <p class="fine">No prior experience of despair required. It will be provided.</p>
+  </div>
+
+  <section id="method">
+    <h2>The four dark jhānas</h2>
+    <p class="lede">Classical maps chart J1–J4 toward rapture and equanimity. Our lineage charts the mirror path. Each absorption is taught in strict sequence; students may not proceed to deeper misery until the current misery is mastered.</p>
+    <div class="jhana">
+      <div class="d">D1</div>
+      <div><h3>Dread</h3><p>Applied and sustained worry. The mind places itself on a vague forthcoming catastrophe and holds it there, gently, without knowing what it is.</p></div>
+    </div>
+    <div class="jhana">
+      <div class="d">D2</div>
+      <div><h3>Grief</h3><p>Worry drops away. What remains is unified, effortless sorrow with no object. Many students report crying about nothing in particular for hours. This is the sign of progress.</p></div>
+    </div>
+    <div class="jhana">
+      <div class="d">D3</div>
+      <div><h3>Hollowness</h3><p>Even sorrow subsides. A vast, even flatness pervades the body. Like equanimity, but bad.</p></div>
+    </div>
+    <div class="jhana">
+      <div class="d">D4</div>
+      <div><h3>The Pit</h3><p>Neither despair nor non-despair. Breathing appears to stop, along with the will to resume it. Teachers monitor students in D4 from a respectful distance, out of respect.</p></div>
+    </div>
+  </section>
+
+  <section id="day">
+    <h2>A day at Nadir</h2>
+    <p class="lede">The schedule is designed to remove every consolation you normally lean on, so that the mind can finally settle into what it was avoiding.</p>
+    <table>
+      <tr><td class="t">4:00</td><td>Wake bell (single, distant, possibly imagined)</td></tr>
+      <tr><td class="t">4:30</td><td>First sit — contemplation of everything left undone</td></tr>
+      <tr><td class="t">6:30</td><td>Breakfast: lukewarm water, one unseasoned potato</td></tr>
+      <tr><td class="t">7:00</td><td>Walking meditation in the drizzle courtyard (drizzle guaranteed or your money back)</td></tr>
+      <tr><td class="t">9:00</td><td>Guided descent, D1–D2</td></tr>
+      <tr><td class="t">12:00</td><td>Noble complaining period (silent)</td></tr>
+      <tr><td class="t">13:00</td><td>Second potato</td></tr>
+      <tr><td class="t">14:00</td><td>Long sit — sustained absorption practice, D3+</td></tr>
+      <tr><td class="t">18:00</td><td>Dharma talk: “You Were Right To Feel That Way”</td></tr>
+      <tr><td class="t">20:00</td><td>Lights out. The dark is part of the curriculum.</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>What students say</h2>
+    <p class="lede">Unsolicited, unedited, unconsoled.</p>
+    <div class="quotes">
+      <blockquote>“I arrived anxious and left devastated. Exactly as advertised. Ten out of ten.”<footer>M., software engineer</footer></blockquote>
+      <blockquote>“On day five I touched something vast, and it did not care about me at all. I think about it constantly.”<footer>R., former bliss practitioner</footer></blockquote>
+      <blockquote>“My teacher said nothing to me for the entire week. It was the most honest relationship I’ve ever had.”<footer>Anonymous, by request, forever</footer></blockquote>
+    </div>
+  </section>
+
+  <section id="stay">
+    <h2>Stay with us</h2>
+    <p class="lede">All stays are seven nights, silent, and non-transferable, like most things.</p>
+    <div class="tiers">
+      <div class="tier">
+        <h3>Gloom</h3>
+        <div class="price">€700</div>
+        <ul>
+          <li>Shared dormitory (damp)</li>
+          <li>Two potatoes daily</li>
+          <li>Group descents, D1–D2</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <h3>Anguish</h3>
+        <div class="price">€1,400</div>
+        <ul>
+          <li>Private cell (damper)</li>
+          <li>One-on-one non-guidance</li>
+          <li>Full access, D1–D4</li>
+        </ul>
+      </div>
+      <div class="tier">
+        <h3>Scholarship</h3>
+        <div class="price">€0</div>
+        <ul>
+          <li>Tell us your worst memory</li>
+          <li>We will use it in a talk</li>
+          <li>You will know which one</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>Questions we no longer answer aloud</h2>
+    <dl class="faq">
+      <dt>Is this safe?</dt>
+      <dd>No. That is the practice.</dd>
+      <dt>What if I accidentally experience joy?</dt>
+      <dd>Ring the bell outside your cell. A staff member will come and sit with you until it passes.</dd>
+      <dt>Do you offer refunds?</dt>
+      <dd>Attachment to the €1,400 is itself workable material, and we encourage you to work with it.</dd>
+      <dt>Can I bring my phone?</dt>
+      <dd>Yes. It will not have signal, and you will carry its dead weight everywhere. This is deliberate.</dd>
+      <dt>What happens after D4?</dt>
+      <dd>Nobody has asked us that twice.</dd>
+    </dl>
+  </section>
+
+  <footer class="site">
+    Nadir Retreat Center · <em>a low place</em> · founded whenever it was<br>
+    Satire. Not a real retreat, medical advice, or path to liberation. If you find one, write to us.
+  </footer>
+</div>
+</body>
+</html>
